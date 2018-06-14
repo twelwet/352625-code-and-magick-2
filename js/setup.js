@@ -42,14 +42,27 @@ var WIZARD_EYES_COLOR = [
 
 var WIZARD_QUANTITY = 4;
 
+// Функция удаления у блока 'block' класса 'cssClass'
+var addClass = function (block, cssClass) {
+  block.classList.remove(cssClass);
+};
+
+// Функция показа блока 'block'
+var showBlock = function (block) {
+  addClass(block, 'hidden');
+};
+
 // Находим DIV всплывающего окна с настройками мага
 var userDialog = document.querySelector('.setup');
 
-// Удалим класс 'hidden'
-userDialog.classList.remove('hidden');
+// Показ блока 'userDialog'
+showBlock(userDialog);
 
-// Находим пустой DIV списка похожих персонажей
-var similarListElement = userDialog.querySelector('.setup-similar-list');
+// Блок похожих персонажей
+var similarWizardsBlock = userDialog.querySelector('.setup-similar');
+
+// Находим пустой DIV списка в блоке похожих персонажей
+var similarListElement = similarWizardsBlock.querySelector('.setup-similar-list');
 
 // Находим TEMPLATE похожего персонажа
 var similarWizardTemplate = document.getElementById('similar-wizard-template').content;
@@ -73,14 +86,38 @@ for (var i = 0; i < wizards.length; i++) {
   };
 }
 
+// Объявим функцию заливки блока цветом
+var colorizeBlock = function (block, color) {
+  block.style.fill = color;
+};
+
+// Объявим функцию заполнения блока текстовым контентом
+var addContentToBlock = function (block, content) {
+  block.textContent = content;
+};
+
 // Объявляем функцию создания DOM-элемента похожего персонажа
 var renderWizard = function (wizard) {
   // Объявляем переменную, в которую клонируем шаблон похожего героя
   var wizardElement = similarWizardTemplate.cloneNode(true);
-  // Задаем имя персонажа, цвет мантии, цвет глаз
-  wizardElement.querySelector('.setup-similar-label').textContent = wizard.name + ' ' + wizard.surname;
-  wizardElement.querySelector('.wizard-coat').style.fill = wizard.coatColor;
-  wizardElement.querySelector('.wizard-eyes').style.fill = wizard.eyesColor;
+  // Накидка героя
+  var wizardCoat = wizardElement.querySelector('.wizard-coat');
+
+  // Глаза героя
+  var wizardEyes = wizardElement.querySelector('.wizard-eyes');
+
+  // Блок имени и фамилии героя
+  var wizardNameBlock = wizardElement.querySelector('.setup-similar-label');
+
+  // Покрас накидки
+  colorizeBlock(wizardCoat, wizard.coatColor);
+
+  // Покрас глаз
+  colorizeBlock(wizardEyes, wizard.coatColor);
+
+  // Добавление текстового контента 'Имя + Фамилия'
+  addContentToBlock(wizardNameBlock, wizard.name + ' ' + wizard.surname);
+
   return wizardElement;
 };
 
@@ -91,7 +128,9 @@ var drawAllWizards = function () {
     fragment.appendChild(renderWizard(wizards[i]));
   }
   similarListElement.appendChild(fragment);
-  userDialog.querySelector('.setup-similar').classList.remove('hidden');
+
+  // Показ блока похожих персонажей
+  showBlock(similarWizardsBlock);
 };
 
 drawAllWizards();
